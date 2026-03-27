@@ -1,0 +1,47 @@
+name: SonarQube Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      PROJECT_KEY:
+        description: 'SonarQube project key'
+        required: false
+        default: ''
+      SONAR_ORGANIZATION:
+        description: 'SonarQube Cloud organization key'
+        required: false
+        default: ''
+  push:
+    branches:
+      - main
+      - master
+      - "develop/**"
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ inputs.PROJECT_KEY }}
+            -Dsonar.organization=${{ inputs.SONAR_ORGANIZATION }}
