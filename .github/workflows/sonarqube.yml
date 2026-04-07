@@ -7,8 +7,12 @@ on:
         description: 'SonarQube project key'
         required: false
         default: ''
+      SONAR_HOST_URL:
+        description: 'SonarQube host URL'
+        required: false
+        default: ''
       SONAR_ORGANIZATION:
-        description: 'SonarQube Cloud organization key'
+        description: 'SonarQube Cloud organization key (ignored by Server)'
         required: false
         default: ''
   push:
@@ -41,6 +45,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v7
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ inputs.SONAR_HOST_URL }}
         with:
           args: >
             -Dsonar.projectKey=${{ inputs.PROJECT_KEY }}
